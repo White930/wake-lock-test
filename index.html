@@ -1,31 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>防止螢幕休眠</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <h1>防止手機螢幕休眠</h1>
   <button id="toggleButton">🟢 點我啟動</button>
+  <div id="iosReminder">📱 iOS 裝置偵測到切換畫面後，請點擊上方按鈕重新啟動防休眠</div>
   <div id="status">尚未啟動</div>
   <pre id="log"></pre>
-
   <script src="wake-lock-manager.js"></script>
   <script>
-    const logEl = document.getElementById('log');
+    const btn = document.getElementById('toggleButton');
+    const statusEl = document.getElementById('status');
 
     const wakeLockManager = new WakeLockManager((active) => {
-      document.getElementById('status').textContent = active
-        ? '✅ 防休眠已啟動'
-        : '❎ 防休眠已解除';
+      if (active) {
+        btn.textContent = '🔴 啟動中';
+        btn.classList.add('active');
+        statusEl.textContent = '✅ 防休眠已啟動';
+      } else {
+        btn.textContent = '🟢 點我啟動';
+        btn.classList.remove('active');
+        statusEl.textContent = '❎ 防休眠已解除';
+      }
     });
 
     document.getElementById('toggleButton').addEventListener('click', () => {
       wakeLockManager.toggle();
     });
   </script>
+
+
 </body>
+
 </html>
