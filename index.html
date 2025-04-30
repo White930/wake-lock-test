@@ -4,95 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>防止螢幕休眠</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 50px 20px;
-      background-color: #f0f0f0;
-    }
-    h1 {
-      font-size: 1.8em;
-      margin-bottom: 20px;
-    }
-    button {
-      font-size: 1.5em;
-      padding: 15px 30px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 4px #388E3C;
-      transition: all 0.2s ease;
-    }
-    button:active {
-      background-color: #388E3C;
-      box-shadow: 0 2px #2E7D32;
-      transform: translateY(2px);
-    }
-    #status {
-      margin-top: 30px;
-      font-size: 1.2em;
-      color: #333;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <h1>防止手機螢幕休眠</h1>
   <button id="toggleButton">🟢 點我啟動</button>
   <div id="status">尚未啟動</div>
+  <pre id="log"></pre>
 
+  <script src="wake-lock-manager.js"></script>
   <script>
-    let wakeLock = null;
-    let isWakeLockActive = false;
+    const logEl = document.getElementById('log');
 
-    const button = document.getElementById('toggleButton');
-    const status = document.getElementById('status');
-
-    async function requestWakeLock() {
-      try {
-        wakeLock = await navigator.wakeLock.request('screen');
-        isWakeLockActive = true;
-        button.textContent = "🔴 點我取消";
-        status.textContent = "✅ 已啟動防休眠";
-
-        wakeLock.addEventListener('release', () => {
-          isWakeLockActive = false;
-          button.textContent = "🟢 點我啟動";
-          status.textContent = "⚠️ 防休眠已解除";
-        });
-      } catch (err) {
-        status.textContent = `❌ 錯誤：${err.message}`;
-      }
-    }
-
-    async function releaseWakeLock() {
-      if (wakeLock) {
-        await wakeLock.release();
-        wakeLock = null;
-        isWakeLockActive = false;
-        button.textContent = "🟢 點我啟動";
-        status.textContent = "❎ 已手動解除";
-      }
-    }
-
-    button.addEventListener('click', () => {
-      if (!isWakeLockActive) {
-        requestWakeLock();
-      } else {
-        releaseWakeLock();
-      }
+    const wakeLockManager = new WakeLockManager((active) => {
+      document.getElementById('status').textContent = active
+        ? '✅ 防休眠已啟動'
+        : '❎ 防休眠已解除';
     });
 
-    // 如果頁面重新回來，再自動請求
-    document.addEventListener('visibilitychange', () => {
-      if (wakeLock !== null && document.visibilityState === 'visible') {
-        requestWakeLock();
-      }
+    document.getElementById('toggleButton').addEventListener('click', () => {
+      wakeLockManager.toggle();
     });
   </script>
-
 </body>
 </html>
