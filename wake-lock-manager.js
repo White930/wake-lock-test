@@ -7,6 +7,7 @@ class WakeLockManager {
     // 監聽是否有切換頁面
     document.addEventListener('visibilitychange', () => {
       if (this.isActive && document.visibilityState === 'visible') {
+        this.logToScreen('🖱️ 切頁面重新發送請求');
         this.request();
       }
     });
@@ -26,12 +27,11 @@ class WakeLockManager {
       this.logToScreen('✅ 螢幕防休眠已啟動');
 
       this.wakeLock.addEventListener('release', () => {
-        this.isActive = false;
         if (this.onStatusChange) this.onStatusChange(false);
         this.logToScreen('⚠️ Wake Lock 被釋放');
       });
     } catch (err) {
-      this.logToScreen('❌ Wake Lock 啟動失敗:', err);
+      this.logToScreen('❌ Wake Lock 啟動失敗:', err.message);
     }
   }
 
