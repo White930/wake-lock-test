@@ -10,6 +10,11 @@ class WakeLockManager {
       this.createIOSOverlay();
     }
 
+    // 頁面載入完成後執行
+    document.addEventListener('DOMContentLoaded', () => {
+      wakeLockManager.request();
+    });
+
     // 監聽是否有切換頁面
     document.addEventListener('visibilitychange', () => {
        if (this.isActive && document.visibilityState === 'visible') {
