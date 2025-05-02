@@ -103,7 +103,10 @@ class WakeLockManager {
   logToScreen(...args) {
     const logEl = document.getElementById('log');
     const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ');
-    if (logEl) logEl.textContent += msg + '\n';
+    if (logEl) {
+      logEl.textContent += msg + '\n';
+      logEl.scrollTop = logEl.scrollHeight;
+    }
     console.log(...args);
   }
 }
